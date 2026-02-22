@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app2-deployment
+  labels:
+    app: app2
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      pod: app2-pod
+  template:
+    metadata:
+      labels:
+        pod: app2-pod
+    spec:
+      containers:
+      - name: app2
+        image: nginx:alpine
+        ports:
+          - containerPort: 80
+        volumeMounts:
+          - name: vol-app2
+            mountPath: /usr/share/nginx/html/
+      volumes:
+      - name: vol-app2
+        configMap: 
+          name: app2-configmap

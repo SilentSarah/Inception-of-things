@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app3-deployment
+  labels:
+    app: app3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: app3-pod
+  template:
+    metadata:
+      labels:
+        pod: app3-pod
+    spec:
+      containers:
+      - name: app3
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: app3-vol
+          mountPath: /usr/share/nginx/html/
+      volumes:
+      - name: app3-vol
+        configMap:
+          name: app3-configmap
