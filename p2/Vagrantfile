@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "alvistack/ubuntu-25.10"
+
+  config.vm.define "hmeftahS" do |server|
+    server.vm.hostname = "hmeftahS"
+    server.vm.network "private_network", ip: "192.168.56.110"
+    
+    server.vm.provider "virtualbox" do |vb|
+      vb.cpus = 2
+      vb.memory = "2048"
+      vb.name = "hmeftahS"
+    end
+
+    server.vm.provision "shell", inline: <<-SHELL
+      sudo apt update
+      sudo apt install -y curl
+      curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--flannel-iface=eth1" sh -
+      
+      while [ ! -f /var/lib/rancher/k3s/server/node-token ]; do
+        echo "Waiting for K3s to be ready..."
+        sleep 2
+      done
+      
+      sleep 10
+      
+      sudo kubectl apply -k /vagrant/manifests/
+      
+      sudo kubectl get pods -A
+      sudo kubectl get ingress -A
+    SHELL
+  end
+end

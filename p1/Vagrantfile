@@ -1,0 +1,39 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config| 
+  config.vm.box = "alvistack/ubuntu-25.10"
+
+  config.vm.define "hmeftahS" do |hS|
+    hS.vm.hostname = "hmeftahS"
+    hS.vm.network "private_network", ip: "192.168.56.110"
+    hS.vm.provider "virtualbox" do |vb|
+      vb.cpus = 2
+      vb.memory = "1024"
+      vb.customize ["modifyvm", :id, "--name", "hmeftahS"]
+    end
+    hS.vm.provision "shell", inline: <<-SHELL
+      sudo apt update
+      sudo apt install -y curl
+      curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--flannel-iface=eth1" sh -
+      TOKEN=$(sudo cat /var/lib/rancher/k3s/server/node-token)
+      echo $TOKEN > /vagrant/token
+    SHELL
+  end
+
+  config.vm.define "hmeftahSW" do |hSW|
+    hSW.vm.hostname = "hmeftahSW"
+    hSW.vm.network "private_network", ip: "192.168.56.111"
+    hSW.vm.provider "virtualbox" do |vb|
+      vb.cpus = 2
+      vb.memory = "1024"
+      vb.customize ["modifyvm", :id, "--name", "hmeftahSW"]
+    end
+    hSW.vm.provision "shell", inline: <<-SHELL
+      sudo apt update
+      sudo apt install -y curl
+      TOKEN=$(sudo cat /vagrant/token)
+      curl -sfL https://get.k3s.io | K3S_URL=https://192.168.56.110:6443 K3S_TOKEN=$TOKEN INSTALL_K3S_EXEC="--flannel-iface=eth1" sh -
+    SHELL
+  end
+end

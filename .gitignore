@@ -1,0 +1,6 @@
+.vagrant
+token
+*.txt
+Vagrantfile
+*.md
+*.log
