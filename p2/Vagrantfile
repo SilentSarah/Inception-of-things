@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
       
       sleep 10
       
-      sudo kubectl apply -k /vagrant/manifests/
+      sudo kubectl apply -f /vagrant/manifests/
       
       sudo kubectl get pods -A
       sudo kubectl get ingress -A
