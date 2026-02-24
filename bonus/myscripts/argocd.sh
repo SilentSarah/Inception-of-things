@@ -13,14 +13,14 @@ if command -v kubectl &> /dev/null; then
         if [ $? -eq 0 ]; then
             echo "argocd installed successfully."
             echo "Applying ArgoCD Application..."
-            sudo kubectl apply -f /vagrant/confs/application.yaml
+            sudo kubectl apply -f $(pwd)/../confs/application.yaml
 
             echo "Retrieving ArgoCD Password..."
             ARGOCD_PWD=$(sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
 
             echo "ArgoCD Password: $ARGOCD_PWD"
-            echo "$ARGOCD_PWD" > /vagrant/argocd-password.txt
-            chmod 600 /vagrant/argocd-password.txt
+            echo "$ARGOCD_PWD" > $HOME/argocd-password.txt
+            chmod 600 $HOME/argocd-password.txt
 
             echo "------------------------------------------------------------"
             echo "ArgoCD Installation Complete!"
@@ -29,8 +29,7 @@ if command -v kubectl &> /dev/null; then
             echo "Username: admin"
             echo "Password: $ARGOCD_PWD"
             echo ""
-            echo "Password saved to: /vagrant/argocd-password.txt"
-            echo "(Available on host at: bonus/argocd-password.txt)"
+            echo "Password saved to: $HOME/argocd-password.txt"
             echo "------------------------------------------------------------"
         else
             echo "Failed to install argocd." >&2
