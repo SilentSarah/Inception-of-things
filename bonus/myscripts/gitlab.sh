@@ -3,8 +3,12 @@
 echo "Switching to the correct cluster context..."
 sudo k3d kubeconfig merge p3-cluster --kubeconfig-switch-context &> /dev/null
 
-sudo helm repo add gitlab https://charts.gitlab.io/
-sudo helm repo update
+if helm repo list | grep -q "gitlab"; then
+    echo "GitLab repo already exists, skipping..."
+else
+    sudo helm repo add gitlab https://charts.gitlab.io/
+    sudo helm repo update
+fi
 
 echo "Installing GitLab CE (Lite)..."
 sudo helm upgrade --install gitlab gitlab/gitlab \
@@ -40,8 +44,8 @@ if [ $? -eq 0 ]; then
     GITLAB_PWD=$(sudo kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -o jsonpath="{.data.password}" | base64 --decode)
     
     echo "GitLab Root Password: $GITLAB_PWD"
-    echo "$GITLAB_PWD" > $(users)/gitlab-password.txt
-    chmod 600 $(users)/gitlab-password.txt
+    echo "$GITLAB_PWD" > $(pwd)/gitlab-password.txt
+    chmod 600 $(pwd)/gitlab-password.txt
 
     echo "Waiting for GitLab UI to be fully ready (this can take 5-10 minutes)..."
     sudo kubectl wait -n gitlab --for=condition=available deployment/gitlab-webservice-default --timeout=600s
@@ -52,7 +56,7 @@ if [ $? -eq 0 ]; then
     echo "Username: root"
     echo "Password: $GITLAB_PWD"
     echo ""
-    echo "Password saved to: $(users)/gitlab-password.txt"
+    echo "Password saved to: $(pwd)/gitlab-password.txt"
     echo "------------------------------------------------------------"
 else
     echo "Failed to install GitLab." >&2

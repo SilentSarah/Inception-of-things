@@ -19,8 +19,8 @@ if command -v kubectl &> /dev/null; then
             ARGOCD_PWD=$(sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
 
             echo "ArgoCD Password: $ARGOCD_PWD"
-            echo "$ARGOCD_PWD" > $(users)/argocd-password.txt
-            chmod 600 $(users)/argocd-password.txt
+            echo "$ARGOCD_PWD" > $(pwd)/argocd-password.txt
+            chmod 600 $(pwd)/argocd-password.txt
 
             echo "------------------------------------------------------------"
             echo "ArgoCD Installation Complete!"
@@ -29,7 +29,7 @@ if command -v kubectl &> /dev/null; then
             echo "Username: admin"
             echo "Password: $ARGOCD_PWD"
             echo ""
-            echo "Password saved to: $(users)/argocd-password.txt"
+            echo "Password saved to: $(pwd)/argocd-password.txt"
             echo "------------------------------------------------------------"
         else
             echo "Failed to install argocd." >&2
