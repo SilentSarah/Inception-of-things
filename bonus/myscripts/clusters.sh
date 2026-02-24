@@ -1,17 +1,17 @@
 #!/bin/bash
 
 if command -v k3d &> /dev/null; then
-if sudo k3d cluster get p3-cluster &> /dev/null; then
-    echo "p3-cluster exists, starting if necessary..."
-    sudo k3d cluster start p3-cluster
-    sudo k3d kubeconfig merge p3-cluster --kubeconfig-switch-context
+if sudo k3d cluster get bonus-cluster &> /dev/null; then
+    echo "bonus-cluster exists, starting if necessary..."
+    sudo k3d cluster start bonus-cluster
+    sudo k3d kubeconfig merge bonus-cluster --kubeconfig-switch-context
 else
-    sudo k3d cluster create p3-cluster --port 8080:80@loadbalancer --port 8888:80@loadbalancer
+    sudo k3d cluster create bonus-cluster --port 8080:80@loadbalancer --port 8888:80@loadbalancer
     if [ $? -eq 0 ]; then
-        echo "p3-cluster created successfully."
-        sudo k3d kubeconfig merge p3-cluster --kubeconfig-switch-context
+        echo "bonus-cluster created successfully."
+        sudo k3d kubeconfig merge bonus-cluster --kubeconfig-switch-context
     else
-        echo "Failed to create p3-cluster." >&2
+        echo "Failed to create bonus-cluster." >&2
         exit 1
     fi
 fi
